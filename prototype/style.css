@@ -1,0 +1,333 @@
+/* ==========================================================================
+   convects — dictionary prototype
+   all rendered text is lowercase. monospace only. dark only.
+   ========================================================================== */
+
+:root {
+  /* --- palette (given) --- */
+  --bg:            #171A21;
+  --text-primary:  #F4F4F6;  /* headwords, links, important text */
+  --text-body:     #E6E6E9;  /* definitions, paragraphs */
+  --text-muted:    #9999A1;  /* part of speech, examples, support */
+
+  /* --- palette (derived, for structure the metaphor needs) --- */
+  --surface:       #1E222B;  /* raised blocks, code, image wells */
+  --rule:          #2A2F3A;  /* hairline dividers */
+  --dim:           #6E6E77;  /* sense numbers, ipa, link underlines */
+
+  /* --- layout --- */
+  --margin-x:      15vw;
+  --margin-top:    10vh;
+  --measure:       68ch;     /* caps the reading column on wide displays */
+
+  /* --- type --- */
+  --font: "IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Mono",
+          Consolas, "Liberation Mono", monospace;
+  --fs-headword: clamp(2rem, 3.4vw, 2.875rem);
+  --fs-body:     1.0625rem;
+  --fs-meta:     0.9375rem;
+  --lh-body:     1.75;
+
+  /* --- motion --- */
+  --anim-duration: 0.6s;
+  --anim-stagger:  0.5s;    /* between STARTS, not after completion */
+  --anim-distance: 12px;
+  --anim-ease:     cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;          /* no scroll. the default everywhere. */
+}
+
+/* the one documented exception: a single piece of writing cannot be
+   budgeted to one screen, so post pages opt in with class="scrolls"
+   on <html>. entry pages never do. */
+.scrolls,
+.scrolls body {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+.scrolls {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-body);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  text-transform: lowercase; /* enforcement net; content is authored lowercase too */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--text-muted);
+  color: var(--bg);
+}
+
+/* ==========================================================================
+   layout
+   ========================================================================== */
+
+/* .page owns the margins: 15% of viewport width each side, 10% of
+   viewport height on top. .entry caps the reading column so text does
+   not stretch to 1800px on an ultrawide display. */
+.page {
+  height: 100%;
+  padding: var(--margin-top) var(--margin-x) 0;
+}
+
+/* scrolling pages need room at the foot */
+.scrolls .page {
+  height: auto;
+  padding-bottom: var(--margin-top);
+}
+
+.entry {
+  max-width: var(--measure);
+}
+
+/* ==========================================================================
+   entry head — headword, pronunciation, part of speech
+   ========================================================================== */
+
+.entry__head {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 1.75rem;
+}
+
+/* cambridge order, stacked: headword / part of speech / pronunciation */
+.headword {
+  display: block;
+  font-size: var(--fs-headword);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.pos {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: var(--fs-meta);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.ipa {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: var(--fs-meta);
+  color: var(--dim);
+  letter-spacing: 0.02em;
+}
+
+/* placeholder styling — remove once real ipa lands */
+.ipa[data-placeholder] { opacity: 0.8; }
+
+/* a post title is a sentence, not a word, so it sets smaller and wraps.
+   the pronunciation slot carries the date instead. */
+.headword--post {
+  font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+  line-height: 1.35;
+  max-width: 34ch;
+}
+
+.dateline {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: var(--fs-meta);
+  color: var(--dim);
+}
+
+/* ==========================================================================
+   senses — numbered, hanging indent
+   ========================================================================== */
+
+.senses {
+  counter-reset: sense;
+  list-style: none;
+}
+
+.sense {
+  counter-increment: sense;
+  padding-left: 3ch;
+  margin-bottom: 1.5rem;
+}
+
+.sense:last-child { margin-bottom: 0; }
+
+.sense__def {
+  position: relative;
+  color: var(--text-body);
+}
+
+.sense__def::before {
+  content: counter(sense) ".";
+  position: absolute;
+  left: -3ch;
+  color: var(--dim);
+}
+
+/* cambridge sets examples indented beneath the definition, which ends
+   in a colon. no quote marks. */
+.sense__eg {
+  margin-top: 0.35rem;
+  margin-left: 2ch;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   lists — projects, writing
+   ========================================================================== */
+
+.items {
+  counter-reset: item;
+  list-style: none;
+  padding-left: 3ch;
+}
+
+.item {
+  counter-increment: item;
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.item::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: -3ch;
+  color: var(--dim);
+}
+
+.item__name {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.item__desc { color: var(--text-body); }
+
+.item__meta {
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+/* two-column grid — the ONLY place left-to-right ordering applies.
+   dom order is row-major, so reveal order is:
+   1 top-left, 2 top-right, 3 bottom-left, 4 bottom-right. */
+.items--grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 4ch;
+  row-gap: 1.5rem;
+}
+
+/* closing example sits apart from the entry body */
+.entry__eg {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.prose {
+  color: var(--text-body);
+  margin-bottom: 1rem;
+  max-width: 60ch;
+}
+
+.prose:last-of-type { margin-bottom: 0; }
+
+/* ==========================================================================
+   links — strictly grayscale, no accent color
+   ========================================================================== */
+
+a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--dim);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.18s ease, color 0.18s ease;
+}
+
+a:hover { text-decoration-color: var(--text-muted); }
+
+a:focus-visible {
+  outline: 1px solid var(--text-muted);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+a:visited { color: var(--text-primary); }
+
+/* ==========================================================================
+   images — fade only, never slide
+   ========================================================================== */
+
+.figure {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: grayscale(1);
+  transition: filter 0.3s ease;
+}
+
+.figure:hover img { filter: grayscale(0); }
+
+/* ==========================================================================
+   reveal animation
+   text  : fade + slide up
+   images: fade only
+   order : dom order == reading order (row 1 l→r, then row 2 l→r)
+   ========================================================================== */
+
+.js [data-reveal] { opacity: 0; }
+
+.js [data-reveal].is-revealed {
+  animation: reveal-text var(--anim-duration) var(--anim-ease) both;
+  animation-delay: calc(var(--i, 0) * var(--anim-stagger));
+}
+
+.js [data-reveal="image"].is-revealed { animation-name: reveal-image; }
+
+@keyframes reveal-text {
+  from { opacity: 0; transform: translateY(var(--anim-distance)); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes reveal-image {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal],
+  .js [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+  a { transition: none; }
+  .figure img { transition: none; }
+}

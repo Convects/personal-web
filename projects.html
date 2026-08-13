@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>projects &middot; convects</title>
+<script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page">
+  <main class="entry">
+
+    <header class="entry__head">
+      <!-- step 1 -->
+      <h1 class="headword" data-reveal>projects</h1>
+      <!-- step 2 — part of speech and pronunciation reveal together -->
+      <div data-reveal>
+        <span class="pos">noun, plural</span>
+        <span class="ipa">/&#712;pr&#593;&#720;.d&#658;ekts/</span>
+      </div>
+    </header>
+
+    <!-- step 3 -->
+    <p class="entry__def" data-reveal>carefully planned pieces of work that have a particular purpose:</p>
+
+    <!-- steps 4-7. the two-column grid is the only place left-to-right
+         ordering applies. css grid places items in dom order, so the
+         source order below is row-major and the reveal runs
+         1 top-left, 2 top-right, 3 bottom-left, 4 bottom-right.
+         item numbers come from a css counter, never hard-coded. -->
+    <ol class="items items--grid">
+      <!-- step 4 -->
+      <li class="item" data-reveal>
+        <span class="item__name">axa</span><br>
+        <span class="item__desc">a small world ruled by big corporations.</span><br>
+        <span class="item__meta">d&amp;d 5.5e &middot; ongoing</span>
+      </li>
+      <!-- step 5 -->
+      <li class="item" data-reveal>
+        <span class="item__name">r.a.n.k</span><br>
+        <span class="item__desc">a simple action rogue-like rpg.</span><br>
+        <span class="item__meta">godot &middot; 2024</span>
+      </li>
+      <!-- step 6 -->
+      <li class="item" data-reveal>
+        <span class="item__name">minion bot</span><br>
+        <span class="item__desc">works out which skyblock minion pays best.</span><br>
+        <span class="item__meta">python &middot; 2021</span>
+      </li>
+      <!-- step 7 -->
+      <li class="item" data-reveal>
+        <span class="item__name">plant care system</span><br>
+        <span class="item__desc">waters a plant when the soil dries, and times its light.</span><br>
+        <span class="item__meta">arduino &middot; 2019</span>
+      </li>
+    </ol>
+
+    <!-- step 8 -->
+    <p class="entry__eg" data-reveal>most of <a href="index.html">convects'</a> projects are unfinished.</p>
+
+  </main>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
